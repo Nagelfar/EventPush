@@ -1,0 +1,8 @@
+﻿@helper Action(string url, IHtmlString content, IEnumerable<string> eventTypes, IEnumerable<string> eventMessages)
+{
+    var parameter = string.Join(" ", eventTypes.Concat(eventMessages));
+
+    <div data-refresh-action="@url" @parameter>
+        @content
+    </div>
+}
