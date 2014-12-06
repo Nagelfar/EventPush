@@ -2,8 +2,13 @@
     Action!
 </div>
 
-@Html.EventRefreshAction(new[] { typeof(EventPush.Events.FooEvent) },"ChildAction")
+@Html.EventRefreshAction("ChildAction").WithEvent(typeof(EventPush.Events.FooEvent))    
 
+<fieldset>
+    <legend>foo bar</legend>
+    @Html.EventRefreshAction("ChildAction").WithEvent(typeof(EventPush.Events.FooEvent))
+
+</fieldset>
 @section Scripts{
     
 }

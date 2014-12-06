@@ -15,6 +15,7 @@ namespace EventPush
 
         public string Message { get; set; }
     }
+
     public static class NotificationRegistriationExtension
     {
         private const string TempDataKey = "NotificationRegistration";

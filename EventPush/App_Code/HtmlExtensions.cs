@@ -9,19 +9,6 @@ namespace EventPush
 {
     public static class HtmlExtensions
     {
-        public static IHtmlString EventRefreshAction(this HtmlHelper helper, Type[] eventTypes, string action, string controller = null, object routeValues = null)
-        {
-            var urlHelper = new UrlHelper(helper.ViewContext.RequestContext);
-
-            var avaliableTypes = helper.ViewContext.GetNotifications()
-                //.Where(x => eventTypes.Contains(x.EventType))
-                .ToList();
-
-            var url = urlHelper.Action(action, controller, routeValues);
-            var content = helper.Action(action, controller, routeValues);
-
-            return ASP.EventRefresh.Action(url, content, avaliableTypes.ToEventNames(),avaliableTypes.ToEventMessages());
-        }
 
         private static IEnumerable<string> ToEventNames(this IEnumerable<NotificiationRegistration> eventTypes)
         {
@@ -42,22 +29,59 @@ namespace EventPush
             return eventMessage;
         }
 
+        public static EventRefreshActionBuilder EventRefreshAction(this HtmlHelper helper, string action, string controller = null, object routeValues = null)
+        {
+            var urlHelper = new UrlHelper(helper.ViewContext.RequestContext);
 
-        public static IHtmlString EventRefreshAction<TEvent>(this HtmlHelper helper, string action, string controller = null, object routeValues = null)
-        {
-            return helper.EventRefreshAction(new[] { typeof(TEvent) }, action, controller, routeValues);
+            var url = urlHelper.Action(action, controller, routeValues);
+            var content = helper.Action(action, controller, routeValues);
+
+            return new EventRefreshActionBuilder(url, content, helper.ViewContext.GetNotifications());
         }
-        public static IHtmlString EventRefreshAction<TEvent1, TEvent2>(this HtmlHelper helper, string action, string controller = null, object routeValues = null)
+
+        public class EventRefreshActionBuilder : IHtmlString
         {
-            return helper.EventRefreshAction(new[] { typeof(TEvent1), typeof(TEvent2) }, action, controller, routeValues);
-        }
-        public static IHtmlString EventRefreshAction<TEvent1, TEvent2, TEvent3>(this HtmlHelper helper, string action, string controller = null, object routeValues = null)
-        {
-            return helper.EventRefreshAction(new[] { typeof(TEvent1), typeof(TEvent2), typeof(TEvent3) }, action, controller, routeValues);
-        }
-        public static IHtmlString EventRefreshAction<TEvent1, TEvent2, TEvent3, TEvent4>(this HtmlHelper helper, string action, string controller = null, object routeValues = null)
-        {
-            return helper.EventRefreshAction(new[] { typeof(TEvent1), typeof(TEvent2), typeof(TEvent3), typeof(TEvent4) }, action, controller, routeValues);
+            private readonly string _url;
+            private readonly IHtmlString _content;
+            private readonly List<Type> _eventTypes;
+            private readonly IEnumerable<NotificiationRegistration> _notifications;
+
+            public EventRefreshActionBuilder(string url, IHtmlString content, IEnumerable<NotificiationRegistration> notifications)
+            {
+                _url = url;
+                _content = content;
+                _notifications = notifications;
+                _eventTypes = new List<Type>();
+            }
+
+            public EventRefreshActionBuilder WithEvent<TEvent>()
+            {
+                return WithEvent(typeof(TEvent));
+            }
+            public EventRefreshActionBuilder WithEvent(Type eventType)
+            {
+                _eventTypes.Add(eventType);
+
+                return this;
+            }
+            public EventRefreshActionBuilder WithEvents(params Type[] eventTypes)
+            {
+                _eventTypes.AddRange(eventTypes);
+
+                return this;
+            }
+
+            public string ToHtmlString()
+            {
+                var avaliableTypes = _notifications
+                    //.Where(x => eventTypes.Contains(x.EventType))
+                     .ToList();
+
+
+                return ASP.EventRefresh
+                    .Action(_url, _content, avaliableTypes.ToEventNames(), avaliableTypes.ToEventMessages())
+                    .ToHtmlString();
+            }
         }
     }
 }
