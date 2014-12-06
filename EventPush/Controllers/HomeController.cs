@@ -31,7 +31,7 @@ namespace EventPush.Controllers
 
         public ActionResult FireEvent()
         {
-            PushNotificationHub.PushEvent(new FooEvent()
+            PushNotificationHub.PushEvent(User.Identity, new FooEvent()
             {
                 Foo = "bar",
                 Bar = "foo"
@@ -41,7 +41,7 @@ namespace EventPush.Controllers
         }
         public ActionResult FireBar()
         {
-            PushNotificationHub.PushEvent(new BarEvent()
+            PushNotificationHub.PushEvent(User.Identity, new BarEvent()
             {
                 FooBar = "foobar"
             });
