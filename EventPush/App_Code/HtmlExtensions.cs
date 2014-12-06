@@ -10,7 +10,7 @@ namespace EventPush
     public static class HtmlExtensions
     {
 
-        private static IDictionary<string,string> ToEventNames(this IEnumerable<NotificiationRegistration> eventTypes)
+        private static IDictionary<string, string> ToEventNames(this IEnumerable<NotificiationRegistration> eventTypes)
         {
             var eventData = eventTypes
                 .Select(x => x.EventType.Name)
@@ -74,7 +74,7 @@ namespace EventPush
             public string ToHtmlString()
             {
                 var avaliableTypes = _notifications
-                    //.Where(x => eventTypes.Contains(x.EventType))
+                    .Where(x => _eventTypes.Contains(x.EventType))
                      .ToList();
 
 
@@ -82,11 +82,13 @@ namespace EventPush
 
                 tagBuilder.MergeAttribute("data-refresh-action", _url);
 
-                foreach(var names in avaliableTypes.ToEventNames()){
-                    tagBuilder.MergeAttribute(names.Key,names.Value);
+                foreach (var names in avaliableTypes.ToEventNames())
+                {
+                    tagBuilder.MergeAttribute(names.Key, names.Value);
                 }
-                foreach(var names in avaliableTypes.ToEventMessages()){
-                    tagBuilder.MergeAttribute(names.Key,names.Value);
+                foreach (var names in avaliableTypes.ToEventMessages())
+                {
+                    tagBuilder.MergeAttribute(names.Key, names.Value);
                 }
 
                 tagBuilder.SetInnerText(_content.ToHtmlString());
