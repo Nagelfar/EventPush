@@ -39,6 +39,15 @@ namespace EventPush.Controllers
 
             return Content("OK");
         }
+        public ActionResult FireBar()
+        {
+            PushNotificationHub.PushEvent(new BarEvent()
+            {
+                FooBar = "foobar"
+            });
+
+            return Content("OK");
+        }
         public ActionResult Action()
         {
             return View();
@@ -46,6 +55,7 @@ namespace EventPush.Controllers
         public ActionResult RedirectBackToAction()
         {
             this.AddNotification<FooEvent>();
+            this.AddNotification<BarEvent>("Das ist das Bar-Event");
 
             return RedirectToAction("Action");
         }

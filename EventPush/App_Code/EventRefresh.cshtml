@@ -1,8 +1,7 @@
-﻿@helper Action(string url, IHtmlString content, IEnumerable<string> eventTypes, IEnumerable<string> eventMessages)
+﻿@helper Action(string url, IHtmlString content, IEnumerable<string> eventTypes, System.Web.Routing.RouteValueDictionary parameters)
 {
-    var parameter = string.Join(" ", eventTypes.Concat(eventMessages));
-
-    <div data-refresh-action="@url" @parameter>
+    
+    <div data-refresh-action="@url"        >
         @content
     </div>
 }

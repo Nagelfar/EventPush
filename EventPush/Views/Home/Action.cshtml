@@ -2,13 +2,13 @@
     Action!
 </div>
 
-@Html.EventRefreshAction("ChildAction").WithEvent(typeof(EventPush.Events.FooEvent))    
+@Html.EventRefreshAction("ChildAction").WithEvents(typeof(EventPush.Events.FooEvent), typeof(EventPush.Events.BarEvent))
 
-<fieldset>
-    <legend>foo bar</legend>
-    @Html.EventRefreshAction("ChildAction").WithEvent(typeof(EventPush.Events.FooEvent))
+    <fieldset>
+        <legend>foo bar</legend>
+        @Html.EventRefreshAction("ChildAction").WithEvent(typeof(EventPush.Events.FooEvent))
+    </fieldset>
 
-</fieldset>
-@section Scripts{
-    
-}
+    @section Scripts{
+
+    }

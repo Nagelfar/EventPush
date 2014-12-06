@@ -12,7 +12,7 @@
                     if (!url)
                         throw "Cannot register a refresh handler for " + attribute.name + " with an empty url!";
 
-                    var messageElement = elem.attributes["data-refresh-message-" + attribute.name.toLowerCase()];
+                    var messageElement = elem.attributes["data-refresh-message-" + attribute.value.toLowerCase()];
 
                     var message = "Daten werden geladen!";
                     if (messageElement && messageElement.value)

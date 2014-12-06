@@ -10,20 +10,20 @@ namespace EventPush
     public static class HtmlExtensions
     {
 
-        private static IEnumerable<string> ToEventNames(this IEnumerable<NotificiationRegistration> eventTypes)
+        private static IDictionary<string,string> ToEventNames(this IEnumerable<NotificiationRegistration> eventTypes)
         {
             var eventData = eventTypes
                 .Select(x => x.EventType.Name)
-                .Select(x => string.Format(@"data-refresh-event-{0}=""{0}""", x))
+                .ToDictionary(x => "data-refresh-event-" + x, x => x)
                 ;
 
             return eventData;
         }
-        private static IEnumerable<string> ToEventMessages(this IEnumerable<NotificiationRegistration> eventTypes)
+        private static IDictionary<string, string> ToEventMessages(this IEnumerable<NotificiationRegistration> eventTypes)
         {
             var eventMessage = eventTypes
                 .Where(x => !string.IsNullOrEmpty(x.Message))
-                .Select(x => string.Format(@"data-refresh-message-{0}=""{1}""", x.EventType.Name, x.Message))
+                .ToDictionary(x => "data-refresh-message-" + x.EventType.Name, x => x.Message)
                 ;
 
             return eventMessage;
@@ -78,9 +78,20 @@ namespace EventPush
                      .ToList();
 
 
-                return ASP.EventRefresh
-                    .Action(_url, _content, avaliableTypes.ToEventNames(), avaliableTypes.ToEventMessages())
-                    .ToHtmlString();
+                var tagBuilder = new TagBuilder("div");
+
+                tagBuilder.MergeAttribute("data-refresh-action", _url);
+
+                foreach(var names in avaliableTypes.ToEventNames()){
+                    tagBuilder.MergeAttribute(names.Key,names.Value);
+                }
+                foreach(var names in avaliableTypes.ToEventMessages()){
+                    tagBuilder.MergeAttribute(names.Key,names.Value);
+                }
+
+                tagBuilder.SetInnerText(_content.ToHtmlString());
+
+                return tagBuilder.ToString();
             }
         }
     }
