@@ -24,7 +24,7 @@
         }
     }
 
-    function matchEvent(currentAttribute: Attr, attributes: NamedNodeMap): RefreshEventMessage {
+   export function matchEvent(currentAttribute: Attr, attributes: NamedNodeMap): RefreshEventMessage {
         if (currentAttribute && currentAttribute.name.toLowerCase().indexOf('data-refresh-event-') >= 0) {
             var eventMessage = RefreshEventMessage.Parse(currentAttribute, attributes);
             return eventMessage;
@@ -32,7 +32,7 @@
         return null;
     }
 
-    class RefreshEventMessage {
+    export class RefreshEventMessage {
         constructor(public attribute: Attr, public eventName: string, public message: string) {
         }
 

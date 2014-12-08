@@ -37,6 +37,7 @@
             }
             return null;
         }
+        Handlers.matchEvent = matchEvent;
 
         var RefreshEventMessage = (function () {
             function RefreshEventMessage(attribute, eventName, message) {
@@ -61,6 +62,7 @@
             };
             return RefreshEventMessage;
         })();
+        Handlers.RefreshEventMessage = RefreshEventMessage;
 
         var ChildActionRefreshTrigger = (function () {
             function ChildActionRefreshTrigger(elem, eventMessage) {

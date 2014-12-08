@@ -222,6 +222,7 @@
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\EventBus.ts" />
     <TypeScriptCompile Include="Scripts\Handlers\ChildActionRefresh.ts" />
+    <TypeScriptCompile Include="Scripts\Handlers\ReloadDataGrid.ts" />
     <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\signalr\signalr.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\toastr\toastr.d.ts" />
