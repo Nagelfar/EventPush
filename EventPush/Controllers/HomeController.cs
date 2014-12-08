@@ -54,8 +54,13 @@ namespace EventPush.Controllers
         }
         public ActionResult RedirectBackToAction()
         {
-            this.AddNotification<FooEvent>();
-            this.AddNotification<BarEvent>("Das ist das Bar-Event");
+            this.RegisterNotifications()
+                .WithInitialMessage("Die Terminserien werden erstellt und in Kürze angezeigt!")
+                .ForEvent<FooEvent>()
+                .ForEvent<BarEvent>("Das ist das Bar-Event");
+
+            //this.AddNotification<FooEvent>();
+            //this.AddNotification<BarEvent>("Das ist das Bar-Event");
 
             return RedirectToAction("Action");
         }

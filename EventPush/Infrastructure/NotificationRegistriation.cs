@@ -19,22 +19,74 @@ namespace EventPush
     public static class NotificationRegistriationExtension
     {
         private const string TempDataKey = "NotificationRegistration";
-        public static void AddNotification<T>(this ControllerBase controller, string message = null) where T : class,IEvent
+     
+        public static NotificationRegistrationBuilder RegisterNotifications(this ControllerBase controller)
         {
-            var registration = controller.TempData[TempDataKey] as IList<NotificiationRegistration> ?? new List<NotificiationRegistration>();
+            if (!controller.TempData.ContainsKey(TempDataKey))
+                controller.TempData[TempDataKey] = new NotificationRegistrationBuilder();
 
-            registration.Add(new NotificiationRegistration
+            return controller.TempData[TempDataKey] as NotificationRegistrationBuilder;
+        }
+
+      
+        public static Notifications GetNotifications(this ViewContext viewContext)
+        {
+            if (viewContext.TempData.ContainsKey(TempDataKey))
+            {
+                var notification = viewContext.TempData[TempDataKey] as NotificationRegistrationBuilder;
+                if (notification != null)
+                    return notification.Build();
+            }
+            return Notifications.Empty;
+        }
+    }
+    public class NotificationRegistrationBuilder
+    {
+        private readonly List<NotificiationRegistration> _registrations = new List<NotificiationRegistration>();
+        private string _initialMessage = "Die Daten werden in wenigen Augenblicken geladen";
+
+        public NotificationRegistrationBuilder WithInitialMessage(string message)
+        {
+            _initialMessage = message;
+
+            return this;
+        }
+
+        public NotificationRegistrationBuilder ForEvent<T>(string message = null) where T : class,IEvent
+        {
+            _registrations.Add(new NotificiationRegistration
             {
                 Message = message,
                 EventType = typeof(T)
             });
-           
-            controller.TempData[TempDataKey] = registration;
+
+            return this;
         }
 
-        public static IEnumerable<NotificiationRegistration> GetNotifications(this ViewContext viewContext)
+        internal Notifications Build()
         {
-            return viewContext.TempData[TempDataKey] as IList<NotificiationRegistration> ?? new List<NotificiationRegistration>();
+            return new Notifications(_initialMessage, _registrations);
+        }
+    }
+
+    public class Notifications
+    {
+        public string InitialMessage { get; private set; }
+        public IEnumerable<NotificiationRegistration> Registrations { get; private set; }
+
+        public Notifications(string _initialMessage, IEnumerable<NotificiationRegistration> _registrations)
+        {
+            this.InitialMessage = _initialMessage;
+            this.Registrations = _registrations;
+        }
+
+
+        public static Notifications Empty
+        {
+            get
+            {
+                return new Notifications("", Enumerable.Empty<NotificiationRegistration>());
+            }
         }
     }
 }

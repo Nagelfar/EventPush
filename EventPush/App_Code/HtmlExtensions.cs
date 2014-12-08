@@ -44,9 +44,9 @@ namespace EventPush
             private readonly string _url;
             private readonly IHtmlString _content;
             private readonly List<Type> _eventTypes;
-            private readonly IEnumerable<NotificiationRegistration> _notifications;
+            private readonly Notifications _notifications;
 
-            public EventRefreshActionBuilder(string url, IHtmlString content, IEnumerable<NotificiationRegistration> notifications)
+            public EventRefreshActionBuilder(string url, IHtmlString content,  Notifications notifications)
             {
                 _url = url;
                 _content = content;
@@ -74,13 +74,15 @@ namespace EventPush
             public string ToHtmlString()
             {
                 var avaliableTypes = _notifications
+                    .Registrations
                     .Where(x => _eventTypes.Contains(x.EventType))
-                     .ToList();
+                    .ToList();
 
 
                 var tagBuilder = new TagBuilder("div");
 
                 tagBuilder.MergeAttribute("data-refresh-action", _url);
+                tagBuilder.MergeAttribute("data-refresh-message", _notifications.InitialMessage);
 
                 foreach (var names in avaliableTypes.ToEventNames())
                 {
