@@ -7,7 +7,7 @@ using System.Web.Mvc.Html;
 
 namespace EventPush
 {
-    public static class HtmlExtensions
+    public static class ChildActionRefreshExtensions
     {
 
         private static IDictionary<string, string> ToEventNames(this IEnumerable<NotificiationRegistration> eventTypes)
