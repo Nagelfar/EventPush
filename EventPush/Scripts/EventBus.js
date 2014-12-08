@@ -2,9 +2,9 @@
 var EventPush;
 (function (EventPush) {
     var Bus = (function () {
-        function Bus(connection) {
+        function Bus(signalRConnection) {
+            this.signalRConnection = signalRConnection;
             this._handlers = {};
-            this._signalRConnection = connection;
         }
         Bus.prototype.connectEventSource = function (hub) {
             var _this = this;
@@ -17,9 +17,9 @@ var EventPush;
         };
 
         Bus.prototype.connect = function () {
-            this.connectEventSource(this._signalRConnection.pushNotificationHub);
+            this.connectEventSource(this.signalRConnection.pushNotificationHub);
 
-            this._signalRConnection.hub.start().done(function () {
+            this.signalRConnection.hub.start().done(function () {
                 toastr.info('SignalR Connected!');
             }).fail(function () {
                 toastr.error('Could not connect SignalR!');

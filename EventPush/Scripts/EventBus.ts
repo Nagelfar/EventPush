@@ -8,13 +8,9 @@ module EventPush {
 
     export class Bus {
 
-
-        private _signalRConnection: SignalR;
         private _handlers: { [key: string]: Handler[]; }= {};
 
-        constructor(connection: SignalR) {
-            this._signalRConnection = connection;
-            
+        constructor(private signalRConnection: SignalR) {
         }
 
         private connectEventSource(hub) {
@@ -28,9 +24,9 @@ module EventPush {
 
         public connect() {
 
-            this.connectEventSource((<any>this._signalRConnection).pushNotificationHub);
+            this.connectEventSource((<any>this.signalRConnection).pushNotificationHub);
 
-            this._signalRConnection.hub
+            this.signalRConnection.hub
                 .start()
                 .done(function () {
                     toastr.info('SignalR Connected!');
