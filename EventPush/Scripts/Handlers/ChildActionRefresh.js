@@ -5,7 +5,7 @@
             var initialMessage = "";
 
             $('div[data-refresh-action]').each(function (index, elem) {
-                var dataRefresh = new DataRefresh(elem);
+                var dataRefresh = new ChildActionRefresh(elem);
                 var attributes = elem.attributes;
 
                 var matches = $.map(attributes, function (attribute) {
@@ -14,7 +14,7 @@
                 matches.filter(function (er) {
                     return er != null;
                 }).filter(function (er) {
-                    return er.validateUrl();
+                    return er.hasValidUrl();
                 }).forEach(function (er) {
                     return er.registerHandler(bus);
                 });
@@ -29,37 +29,37 @@
         }
         Handlers.registerChildActionRefresh = registerChildActionRefresh;
 
-        var DataRefresh = (function () {
-            function DataRefresh(elem) {
+        var ChildActionRefresh = (function () {
+            function ChildActionRefresh(elem) {
                 this.elem = elem;
             }
-            DataRefresh.prototype.isMatchingEvent = function (attribute) {
+            ChildActionRefresh.prototype.isMatchingEvent = function (attribute) {
                 if (attribute && attribute.name.toLowerCase().indexOf('data-refresh-event-') >= 0) {
-                    return new EventRefresh(this.elem, attribute);
+                    return new EventRefreshTrigger(this.elem, attribute);
                 }
                 return null;
             };
-            return DataRefresh;
+            return ChildActionRefresh;
         })();
 
-        var EventRefresh = (function () {
-            function EventRefresh(elem, attribute) {
+        var EventRefreshTrigger = (function () {
+            function EventRefreshTrigger(elem, attribute) {
                 this.elem = elem;
-                this.attribute = attribute;
                 this.attributes = elem.attributes;
+                this.eventName = attribute.value;
             }
-            EventRefresh.prototype.validateUrl = function () {
+            EventRefreshTrigger.prototype.hasValidUrl = function () {
                 var url = this.attributes["data-refresh-action"];
 
                 if (!url)
-                    throw "Cannot register a refresh handler for " + this.attribute.name + " with an empty url!";
+                    throw "Cannot register a refresh handler for " + this.eventName + " with an empty url!";
 
                 this.urlLink = url.value;
                 return true;
             };
 
-            EventRefresh.prototype.extractMessage = function () {
-                var messageElement = this.attributes["data-refresh-message-" + this.attribute.value.toLowerCase()];
+            EventRefreshTrigger.prototype.extractMessage = function () {
+                var messageElement = this.attributes["data-refresh-message-" + this.eventName.toLowerCase()];
 
                 var message = "Daten werden geladen!";
                 if (messageElement && messageElement.value)
@@ -68,12 +68,12 @@
                 return message;
             };
 
-            EventRefresh.prototype.registerHandler = function (bus) {
+            EventRefreshTrigger.prototype.registerHandler = function (bus) {
                 var message = this.extractMessage();
 
-                bus.registerHandler(this.attribute.value, refreshHandler(this.urlLink, this.elem, message));
+                bus.registerHandler(this.eventName, refreshHandler(this.urlLink, this.elem, message));
             };
-            return EventRefresh;
+            return EventRefreshTrigger;
         })();
 
         function refreshHandler(url, element, message) {
@@ -86,4 +86,4 @@
     })(EventPush.Handlers || (EventPush.Handlers = {}));
     var Handlers = EventPush.Handlers;
 })(EventPush || (EventPush = {}));
-//# sourceMappingURL=Handlers.js.map
+//# sourceMappingURL=ChildActionRefresh.js.map
